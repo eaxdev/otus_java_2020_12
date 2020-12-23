@@ -1,0 +1,11 @@
+plugins {
+    id 'java'
+}
+
+group 'io.github.eaxdev'
+version '0.0.1'
+
+repositories {
+    mavenCentral()
+}
+
