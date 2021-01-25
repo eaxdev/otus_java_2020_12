@@ -54,19 +54,19 @@ public class TestExecutor {
     }
 
     private void invokeTest(Class<?> testClass, List<Method> beforeMethods,
-                                   List<Method> afterMethods, Method testMethod, TestsResult testsResult) throws Exception {
+                            List<Method> afterMethods, Method testMethod, TestsResult testsResult) throws Exception {
         Object instance = testClass.getDeclaredConstructor().newInstance();
 
-        beforeMethods.forEach(beforeMethod -> invoke(beforeMethod, instance));
-
-        invoke(testMethod, instance, testsResult);
-
-        afterMethods.forEach(afterMethod -> invoke(afterMethod, instance));
-    }
-
-    private void invoke(Method testMethod, Object instance, TestsResult testsResult) {
         try {
+            for (Method beforeMethod : beforeMethods) {
+                beforeMethod.invoke(instance);
+            }
+
             testMethod.invoke(instance);
+
+            for (Method afterMethod : afterMethods) {
+                afterMethod.invoke(instance);
+            }
             testsResult.incrementSuccess();
         } catch (IllegalAccessException | InvocationTargetException e) {
             Throwable targetException;
@@ -75,17 +75,10 @@ public class TestExecutor {
 
                 if (targetException instanceof AssertionError assertionError) {
                     System.err.println(assertionError.getMessage());
-                    testsResult.incrementFail();
                 }
             }
+            testsResult.incrementFail();
         }
     }
 
-    private void invoke(Method method, Object instance) {
-        try {
-            method.invoke(instance);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-    }
 }
