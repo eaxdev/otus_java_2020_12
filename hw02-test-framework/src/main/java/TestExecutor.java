@@ -56,6 +56,7 @@ public class TestExecutor {
     private void invokeTest(Class<?> testClass, List<Method> beforeMethods,
                             List<Method> afterMethods, Method testMethod, TestsResult testsResult) throws Exception {
         Object instance = testClass.getDeclaredConstructor().newInstance();
+        boolean isSuccess = true;
 
         try {
             for (Method beforeMethod : beforeMethods) {
@@ -63,11 +64,6 @@ public class TestExecutor {
             }
 
             testMethod.invoke(instance);
-
-            for (Method afterMethod : afterMethods) {
-                afterMethod.invoke(instance);
-            }
-            testsResult.incrementSuccess();
         } catch (IllegalAccessException | InvocationTargetException e) {
             Throwable targetException;
             if (e instanceof InvocationTargetException invocationTargetException) {
@@ -77,6 +73,21 @@ public class TestExecutor {
                     System.err.println(assertionError.getMessage());
                 }
             }
+            isSuccess = false;
+        } finally {
+            try {
+                for (Method afterMethod : afterMethods) {
+                    afterMethod.invoke(instance);
+                }
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+                isSuccess = false;
+            }
+        }
+
+        if (isSuccess) {
+            testsResult.incrementSuccess();
+        } else {
             testsResult.incrementFail();
         }
     }
