@@ -15,9 +15,12 @@ public class ProxyCreator {
 
     public Object createProxyIfNeed(Class<?> clazz) {
         if (clazz.getInterfaces().length == 0) {
-            List<String> methodsWithLog = Collections.emptyList();
-            return Enhancer.create(clazz,
-                    (InvocationHandler) (proxy, method, args) -> getInvocationHandler(clazz, methodsWithLog, method, args));
+            if (Arrays.stream(clazz.getMethods()).anyMatch(it -> it.isAnnotationPresent(Log.class))) {
+                List<String> methodsWithLog = Collections.emptyList();
+                return Enhancer.create(clazz,
+                        (InvocationHandler) (proxy, method, args) -> getInvocationHandler(clazz, methodsWithLog, method, args));
+            }
+            return clazz;
         } else {
             List<String> methodsWithLog = Arrays.stream(clazz.getMethods())
                     .filter(it -> it.isAnnotationPresent(Log.class))
