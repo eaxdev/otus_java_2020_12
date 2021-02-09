@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class Hw05 {
 
-    private final static Map<Class<?>, Object> CACHE = new HashMap<>();
+    private static final Map<Class<?>, Object> CACHE = new HashMap<>();
 
     public static void main(String[] args) {
         Reflections scanner = new Reflections("ru.logging", new SubTypesScanner(false));
@@ -32,7 +32,9 @@ public class Hw05 {
         calculator.calculation(3);
         calculator.calculation(3, 3);
         calculator.calculation(3, 3, "foo");
-        calculator.calculationWithoutLog(5, 6, "bar");
+        calculator.calculation(5, 6, "bar");
+        calculator.someMethod(5, 6, "bar", "buzz");
+        calculator.calculation(5, 6, "foo", "bar");
 
         System.out.println("-".repeat(40));
 

@@ -1,27 +1,37 @@
 package ru.logging;
 
 import ru.metadata.Log;
+import ru.metadata.ProxyStrategy;
 
+@ProxyStrategy(ProxyStrategy.Strategy.DYNAMIC_PROXY)
 public class TestLoggingWithInterface implements Calculator {
 
+    @Log
     @Override
     public void calculation(int param1) {
     }
 
-    @Log
+    //@Log
     @Override
     public void calculation(int param1, int param2) {
 
     }
 
-    @Log
+    //@Log
     @Override
     public void calculation(int param1, int param2, String param3) {
 
     }
 
+    @Log
     @Override
-    public void calculationWithoutLog(int param1, int param2, String param3) {
+    public void calculation(int param1, int param2, String param3, String param4) {
         System.out.println("calculationWithoutLog");
+    }
+
+    @Log
+    @Override
+    public void someMethod(int param1, int param2, String param3, String param4) {
+        System.out.println("someMethodWithoutLog");
     }
 }

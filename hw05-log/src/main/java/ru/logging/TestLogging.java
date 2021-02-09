@@ -1,7 +1,9 @@
 package ru.logging;
 
 import ru.metadata.Log;
+import ru.metadata.ProxyStrategy;
 
+@ProxyStrategy(ProxyStrategy.Strategy.CGLIB)
 public class TestLogging {
 
     @Log
