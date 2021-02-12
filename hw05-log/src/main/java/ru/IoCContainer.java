@@ -17,7 +17,7 @@ public class IoCContainer {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getObject(Class<T> type) {
+    public <T> T getObject(Class<T> type) throws Exception {
         if (cache.containsKey(type)) {
             return (T) cache.get(type);
         }
