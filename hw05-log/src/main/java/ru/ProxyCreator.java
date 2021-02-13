@@ -23,7 +23,7 @@ public class ProxyCreator {
                 case DYNAMIC_PROXY -> dynamicProxy(clazz);
             };
         }
-        return clazz;
+        return clazz.getDeclaredConstructor().newInstance();
     }
 
     private Object cglib(Class<?> clazz) throws Exception {
