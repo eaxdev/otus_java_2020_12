@@ -16,7 +16,8 @@ class CustomerTest {
     @DisplayName("Объект Customer как ключ в карте")
     void customerAsKeyTest() {
         //given
-        Customer customer = new Customer(1L, "Ivan", 233);
+        final long customerId = 1L;
+        Customer customer = new Customer(customerId, "Ivan", 233);
         Map<Customer, String> map = new HashMap<>();
 
         String expectedData = "data";
@@ -24,11 +25,18 @@ class CustomerTest {
 
         //when
         long newScore = customer.getScores() + 10;
-        customer.setScores(newScore);
-        String factData = map.get(customer);
+        String factData = map.get(new Customer(customerId, "IvanChangedName", newScore));
 
         //then
         assertThat(factData).isEqualTo(expectedData);
+
+        //when
+        long newScoreSecond = customer.getScores() + 20;
+        customer.setScores(newScoreSecond);
+        String factDataSecond = map.get(customer);
+
+        //then
+        assertThat(factDataSecond).isEqualTo(expectedData);
     }
 
     @Test
@@ -55,9 +63,11 @@ class CustomerTest {
         Map.Entry<Customer, String> middleScore = customerService.getNext(new Customer(10, "Key", 20));
         //then
         assertThat(middleScore.getKey()).isEqualTo(customer1);
+        middleScore.getKey().setScores(10000);
+        middleScore.getKey().setName("Vasy");
 
         //when
-        Map.Entry<Customer, String> biggestScore = customerService.getNext(middleScore.getKey());
+        Map.Entry<Customer, String> biggestScore = customerService.getNext(customer1);
         //then
         assertThat(biggestScore.getKey()).isEqualTo(customer3);
 
