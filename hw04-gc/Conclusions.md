@@ -42,9 +42,9 @@
 | ShenandoahGC | 0.339 | - | - | 280 | 5 | 0.0708 | 5 | - | - | [link][5]
 | Zero GC | 0.249 | - | - | 278 | 4 | 17 | 4 | - | -| [link][6]
 
-[4]: https://gceasy.io/my-gc-report.jsp?p=c2hhcmVkLzIwMjEvMDIvMTMvLS1HMV8xR0IubG9nLS0xMy00My00MA==&channel=WEB
-[5]: https://gceasy.io/my-gc-report.jsp?p=c2hhcmVkLzIwMjEvMDIvMTMvLS1TaGVuYW5kb2FoR0NfMUdCLmxvZy0tMTQtMTAtNTE=&channel=WEB
-[6]: https://gceasy.io/my-gc-report.jsp?p=c2hhcmVkLzIwMjEvMDIvMTMvLS1aR0NfMUdCLmxvZy0tMTQtMjYtMzg=&channel=WEB
+[4]: https://gceasy.io/my-gc-report.jsp?p=c2hhcmVkLzIwMjEvMDIvMjMvLS1nYy0xNzc4NC0yMDIxLTAyLTIzXzE3LTI4LTUxLmxvZy0tMTQtMzItMjg=&channel=WEB
+[5]: https://gceasy.io/my-gc-report.jsp?p=c2hhcmVkLzIwMjEvMDIvMjMvLS1nYy0xNDYzMi0yMDIxLTAyLTIzXzE3LTM2LTUxLmxvZy0tMTQtNDMtMzY=&channel=WEB
+[6]: https://gceasy.io/my-gc-report.jsp?p=c2hhcmVkLzIwMjEvMDIvMjMvLS1aR0NfMUdCLmxvZy0tMTQtNTMtNg==&channel=WEB
 
 *Выводы:*
 
