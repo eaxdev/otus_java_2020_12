@@ -21,7 +21,7 @@ public class Atm {
     public List<Banknote> getBanknotes(int amount) {
         int amountCommon = getAmountCommon();
         if (amountCommon < amount) {
-            throw new RuntimeException("Not enough money");
+            throw new NotEnoughMoneyException();
         }
 
         return split(amount).stream()

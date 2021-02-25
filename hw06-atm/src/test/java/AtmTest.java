@@ -1,6 +1,7 @@
 import hw.Atm;
 import hw.Banknote;
 import hw.Nominal;
+import hw.NotEnoughMoneyException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -100,7 +101,7 @@ class AtmTest {
     @Test
     void notEnoughMoney() {
         assertThatThrownBy( () -> atm.getBanknotes(100_500))
-                .isInstanceOf(RuntimeException.class)
+                .isInstanceOf(NotEnoughMoneyException.class)
                 .hasMessage("Not enough money");
     }
 }
