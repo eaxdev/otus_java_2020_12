@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+}
+
+group 'io.github.eaxdev'
+version '0.0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testImplementation ('org.assertj:assertj-core')
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+test {
+    useJUnitPlatform()
+}
