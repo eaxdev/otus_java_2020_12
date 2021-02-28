@@ -7,12 +7,14 @@ public class Benchmark implements BenchmarkMBean {
 
     public void run() {
         while (true) {
-            for (int i = 0; i < 100_000; i++) {
+            for (int i = 0; i < 500_000; i++) {
                 OBJECTS.add(new SomeClass(i, String.valueOf(i), Long.valueOf(i), Character.valueOf((char) i), true, (short) 127));
             }
-            for (int i = 0; i < 1_000; i++) {
+            System.out.println("Size before delete "  + OBJECTS.size());
+            for (int i = 0; i < 5_000; i++) {
                 OBJECTS.remove(i);
             }
+            System.out.println("Size after delete "  + OBJECTS.size());
         }
     }
 

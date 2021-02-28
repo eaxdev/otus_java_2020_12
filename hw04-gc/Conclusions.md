@@ -14,15 +14,11 @@
 ![](ZGC.JPG)
 
 
-| GC Name | Pause GC Time (AVG Time), ms | Full GC (AVG Time), ms | Full GC, count | Concurrent Mark (AVG Time), ms | Concurrent Mark, count | Cleanup (AVG Time), ms | Cleanup, count | Young GC (AVG Time), ms | Young GC, count  | Full Report |
-| ------------- |:-------------:| -----:| -----:| -----: |-----:| -----:| -----:| -----:| -----:| -----:
-| G1     | 56.9 | 103 | 91 |224  | 7 | 0.125 | 7 | 73.3 | 95 | [link][1]
-| ShenandoahGC      | 36.3 | 260 | 56 | 304 | 970 | 0.0285 | 897 | - | - | [link][2]
-| Zero GC | 0.146 | - | - | 290 | 144 | 3.49 | 144 | - | -| [link][3]
-
-[1]: https://gceasy.io/my-gc-report.jsp?p=c2hhcmVkLzIwMjEvMDIvNy8tLUcxLmxvZy0tMTQtNDYtMzA=&channel=WEB
-[2]: https://gceasy.io/my-gc-report.jsp?p=c2hhcmVkLzIwMjEvMDIvNy8tLVNoZW5hbmRvYWhHQy5sb2ctLTE1LTE3LTE=&channel=WEB
-[3]: https://gceasy.io/my-gc-report.jsp?p=c2hhcmVkLzIwMjEvMDIvNy8tLVpHQy5sb2ctLTE1LTMyLTM0&channel=WEB
+|    Сборщик   | Среднее время пауз, ms | Кол-во пауз | Full GC среднее время пауз, ms | Full GC, кол-во | Время работы приложения, мин
+| -------------|:----------------------:| -----------:| ------------------------------:| ---------------:| ----------------------------:
+| G1           |       54.9             |     188     |           105.5                |       94        |          ~3
+| ShenandoahGC |       36.3             |     3883    |           259.9                |       56        |         \> 10
+| Zero GC      |       0.44             |     144      |           -                    |       -         |          ~10
 
 
 ### Максимальный размер кучи 1 Gb
@@ -36,15 +32,11 @@
   ![](ZGC_1GB.JPG)
 
 
-| GC Name | Pause GC Time (AVG Time), ms | Full GC (AVG Time), ms | Full GC, count | Concurrent Mark (AVG Time), ms | Concurrent Mark, count | Cleanup (AVG Time), ms | Cleanup, count | Young GC (AVG Time), ms | Young GC, count  | Full Report |
-| ------------- |:-------------:| -----:| -----:| -----: |-----:| -----:| -----:| -----:| -----:| -----:
-| G1     | 227 | 405 | 62 | 1 sec 52 ms  | 15 | 0.260 | 4 | 367 | 58 | [link][4]
-| ShenandoahGC | 337 | 999 | 13 | 890 | 101 | 0.0739 | 61 | - | - | [link][5]
-| Zero GC | 0.17 | - | - | 978 | 32 | 2.56 | 32 | - | -| [link][6]
-
-[4]: https://gceasy.io/my-gc-report.jsp?p=c2hhcmVkLzIwMjEvMDIvMjMvLS1nYy0xNzc4NC0yMDIxLTAyLTIzXzE3LTI4LTUxLmxvZy0tMTQtMzItMjg=&channel=WEB
-[5]: https://gceasy.io/my-gc-report.jsp?p=c2hhcmVkLzIwMjEvMDIvMjMvLS1nYy0xNDYzMi0yMDIxLTAyLTIzXzE3LTM2LTUxLmxvZy0tMTQtNDMtMzY=&channel=WEB
-[6]: https://gceasy.io/my-gc-report.jsp?p=c2hhcmVkLzIwMjEvMDIvMjMvLS1aR0NfMUdCLmxvZy0tMTQtNTMtNg==&channel=WEB
+|    Сборщик   | Среднее время пауз, ms | Кол-во пауз | Full GC среднее время пауз, ms | Full GC, кол-во | Время работы приложения, мин
+| -------------|:----------------------:| -----------:| ------------------------------:| ---------------:| ----------------------------:
+| G1           |       209.7            |     102     |           385.5                |       54        |          ~3
+| ShenandoahGC |       575.5            |     400     |           991.3                |       30        |         \> 6
+| Zero GC      |       0.43             |     87      |           -                    |       -         |          ~3
 
 *Выводы:*
 
@@ -53,11 +45,10 @@
   упало примерно через 10 минут, при этом с `ShenandoahGC` проработало дольше.
   При использовании сборщика `G1` приложение проработало около 4 минут
   
-* При размере кучи в 1GB лучше всего себя показывает `Zero GC`. Однако, при его использовании приложение упало примерно через ~3 минуты. При использовании `ShenandoahGC`, если смотреть по графику, с ним память "течет" медленее всего. Наибольшую активность проявляет тогда, когда память практически вся исчерпана.
+* При размере кучи в 1GB лучше всего себя показывает `Zero GC`. Однако, при его использовании приложение упало примерно через ~3 минуты 
+  (`java.lang.OutOfMemoryError: Java heap space`). При использовании `ShenandoahGC`, если смотреть по графику, с ним память "течет" медленее всего. Наибольшую активность проявляет тогда, когда память практически вся исчерпана.
   
 * `Zero GC` предназначен для очень больших хипов — до нескольких терабайт. Цель — гарантировать паузы на сборку мусора на таком хипе максимум 10 миллисекундами. Поэтому на больших хипах применение его оправдано.
-
-Дополнительно логи были проанализированы с помощью сервиса [gceasy.io](https://gceasy.io). Ссылка на отчеты также приложена в таблицах.
 
 В большинстве случаев можно остановить выбор на `ShenandoahGC`, в JDK 8, 11 и 15 он готов для применения в продакшене. 
 В целом он показал себя лучше других, т.к. с ним время работы приложения было максимальным. 
