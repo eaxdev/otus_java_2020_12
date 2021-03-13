@@ -14,9 +14,7 @@ import java.util.List;
 
 public class FileLoader implements Loader {
 
-    private final Gson gson;
-
-    private final String jsonContent;
+    private final  List<Measurement> measurements;
 
     // @formatter:off
     private static final Type LIST_TYPE = new TypeToken<List<Measurement>>(){}.getType();
@@ -28,16 +26,16 @@ public class FileLoader implements Loader {
             if (resource == null) {
                 throw new FileProcessException("File '" + fileName + "' is not found in resources");
             }
-            this.jsonContent = Files.readString(Path.of(resource.toURI()));
+            var jsonContent = Files.readString(Path.of(resource.toURI()));
+            this.measurements = new Gson().fromJson(jsonContent, LIST_TYPE);
         } catch (URISyntaxException | IOException e) {
             throw new FileProcessException(e);
         }
-        this.gson = new Gson();
     }
 
     @Override
     public List<Measurement> load() {
         //читает файл, парсит и возвращает результат
-        return gson.fromJson(jsonContent, LIST_TYPE);
+        return measurements;
     }
 }
