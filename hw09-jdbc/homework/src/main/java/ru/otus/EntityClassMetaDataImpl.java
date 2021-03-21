@@ -25,9 +25,11 @@ public class EntityClassMetaDataImpl implements EntityClassMetaData {
     @Override
     @SuppressWarnings("unchecked")
     public <T> Constructor<T> getConstructor() {
-        return (Constructor<T>) Arrays.stream(clazz.getConstructors())
-                .filter(it -> it.getParameterCount() == getAllFields().size())
-                .findFirst().orElseThrow(RuntimeException::new);
+        try {
+            return (Constructor<T>)clazz.getConstructor();
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

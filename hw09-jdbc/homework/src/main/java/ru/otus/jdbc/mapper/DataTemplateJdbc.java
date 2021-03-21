@@ -4,6 +4,7 @@ import ru.otus.core.repository.DataTemplate;
 import ru.otus.core.repository.DataTemplateException;
 import ru.otus.core.repository.executor.DbExecutor;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -93,13 +94,20 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
 
     @SuppressWarnings("unchecked")
     private T createInstance(java.sql.ResultSet rs) throws Exception {
-        var columnCount = rs.getMetaData().getColumnCount();
-        var values = new Object[columnCount];
+        var instance = metaData.getConstructor().newInstance();
 
-        for (var i = 1; i <= columnCount; i++) {
-            values[i - 1] = rs.getObject(i);
+        for (Field field : metaData.getAllFields()) {
+            var value = rs.getObject(field.getName());
+            try {
+                field.setAccessible(true);
+                field.set(instance, value);
+            } catch (IllegalAccessException e) {
+                throw e;
+            } finally {
+                field.setAccessible(false);
+            }
         }
-        return (T) metaData.getConstructor().newInstance(values);
 
+        return (T) instance;
     }
 }
