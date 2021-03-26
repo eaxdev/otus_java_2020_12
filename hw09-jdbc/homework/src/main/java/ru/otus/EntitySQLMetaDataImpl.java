@@ -3,6 +3,8 @@ package ru.otus;
 import ru.otus.jdbc.mapper.EntityClassMetaData;
 import ru.otus.jdbc.mapper.EntitySQLMetaData;
 
+import java.lang.reflect.Field;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
@@ -30,11 +32,20 @@ public class EntitySQLMetaDataImpl implements EntitySQLMetaData {
 
     @Override
     public String getInsertSql() {
-        var insertFields = entityClassMetaData.getFieldsWithoutId().stream()
+        var fieldsWithoutId = entityClassMetaData.getFieldsWithoutId();
+        var insertFields = fieldsWithoutId.stream()
                 .map(it -> it.getName().toLowerCase()).collect(Collectors.joining(", "));
 
-        var marks = String.join(", ", entityClassMetaData.getFieldsWithoutId().stream()
-                .map(it -> "?").toArray(String[]::new));
+        if (insertFields.isEmpty()) {
+            throw new RuntimeException("Class must contain at least one field");
+        }
+
+        final String marks;
+        if (fieldsWithoutId.size() == 1) {
+            marks = "?";
+        } else {
+            marks = "?" + ", ?".repeat(fieldsWithoutId.size());
+        }
 
         return String.format("INSERT INTO %s (%s) VALUES (%s)",
                 entityClassMetaData.getName().toLowerCase(),
