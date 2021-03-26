@@ -6,6 +6,7 @@ import ru.otus.jdbc.mapper.EntityClassMetaData;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,8 +14,30 @@ public class EntityClassMetaDataImpl implements EntityClassMetaData {
 
     private final Class<?> clazz;
 
+    private final Constructor<?> constructor;
+
+    private final Field fieldId;
+
+    private final List<Field> fields;
+
+    private final List<Field> fieldsWithoutId;
+
     public EntityClassMetaDataImpl(Class<?> clazz) {
         this.clazz = clazz;
+        try {
+            this.constructor = clazz.getConstructor();
+            this.fieldId = Arrays.stream(clazz.getDeclaredFields())
+                    .filter(it -> it.isAnnotationPresent(Id.class))
+                    .findFirst().orElseThrow(RuntimeException::new);
+            this.fields = Arrays.stream(clazz.getDeclaredFields())
+                    .sorted(Comparator.comparing(Field::getName))
+                    .collect(Collectors.toList());
+            this.fieldsWithoutId = Arrays.stream(clazz.getDeclaredFields())
+                    .filter(it -> !it.isAnnotationPresent(Id.class))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -25,29 +48,21 @@ public class EntityClassMetaDataImpl implements EntityClassMetaData {
     @Override
     @SuppressWarnings("unchecked")
     public <T> Constructor<T> getConstructor() {
-        try {
-            return (Constructor<T>)clazz.getConstructor();
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
+        return (Constructor<T>) constructor;
     }
 
     @Override
     public Field getIdField() {
-        return Arrays.stream(clazz.getDeclaredFields())
-                .filter(it -> it.isAnnotationPresent(Id.class))
-                .findFirst().orElseThrow(RuntimeException::new);
+        return fieldId;
     }
 
     @Override
     public List<Field> getAllFields() {
-        return Arrays.stream(clazz.getDeclaredFields()).collect(Collectors.toList());
+        return fields;
     }
 
     @Override
     public List<Field> getFieldsWithoutId() {
-        return Arrays.stream(clazz.getDeclaredFields())
-                .filter(it -> !it.isAnnotationPresent(Id.class))
-                .collect(Collectors.toList());
+        return fieldsWithoutId;
     }
 }
