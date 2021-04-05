@@ -20,7 +20,7 @@ public class Client {
     @OneToOne(mappedBy = "client", cascade = CascadeType.ALL)
     private AddressDataSet address;
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<PhoneDataSet> phoneDataSet;
 
     public Client() {
