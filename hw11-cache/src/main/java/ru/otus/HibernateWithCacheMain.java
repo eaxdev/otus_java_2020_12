@@ -4,6 +4,7 @@ import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.otus.cachehw.HwListener;
+import ru.otus.cachehw.MyCache;
 import ru.otus.hibernate.model.AddressDataSet;
 import ru.otus.hibernate.model.Client;
 import ru.otus.hibernate.model.PhoneDataSet;
@@ -50,7 +51,7 @@ public class HibernateWithCacheMain {
         log.info("Without cache. Client: {}, Time: {}", client1, estimatedTimeWithoutCache);
 
         log.info("----------With cache----------");
-        var dbServiceClientCachingProxy = new DbServiceClientCachingProxy(dbServiceClient, listener);
+        var dbServiceClientCachingProxy = new DbServiceClientCachingProxy(dbServiceClient, new MyCache<>(), listener);
         //первый раз берем из БД
         var clientFromDb = dbServiceClientCachingProxy.getClient(client.getId())
                 .orElseThrow(() -> new RuntimeException("Client not found, id:" + client.getId()));

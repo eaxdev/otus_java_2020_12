@@ -10,17 +10,19 @@ import java.util.Optional;
 
 public class DbServiceClientCachingProxy implements DBServiceClient{
 
-    private final HwCache<String, Client> cache = new MyCache<>();
+    private final HwCache<String, Client> cache;
 
     private final DBServiceClient dbServiceClient;
 
-    public DbServiceClientCachingProxy(DbServiceClientImpl dbServiceClient) {
+    public DbServiceClientCachingProxy(DbServiceClientImpl dbServiceClient, HwCache<String, Client> cache) {
         this.dbServiceClient = dbServiceClient;
+        this.cache = cache;
     }
 
     @SafeVarargs
-    public DbServiceClientCachingProxy(DbServiceClientImpl dbServiceClient, HwListener<String, Client>... cacheListeners) {
+    public DbServiceClientCachingProxy(DbServiceClientImpl dbServiceClient, HwCache<String, Client> cache, HwListener<String, Client>... cacheListeners) {
         this.dbServiceClient = dbServiceClient;
+        this.cache = cache;
 
         for (var cacheListener : cacheListeners) {
             this.cache.addListener(cacheListener);
@@ -29,7 +31,9 @@ public class DbServiceClientCachingProxy implements DBServiceClient{
 
     @Override
     public Client saveClient(Client client) {
-        return dbServiceClient.saveClient(client);
+        var savedClient = dbServiceClient.saveClient(client);
+        cache.put(String.valueOf(savedClient.getId()), savedClient);
+        return savedClient;
     }
 
     @Override
@@ -47,7 +51,8 @@ public class DbServiceClientCachingProxy implements DBServiceClient{
 
     @Override
     public List<Client> findAll() {
-        //todo непонятно, как здесь использовать кэш. В данном случае нет ключа
-        return dbServiceClient.findAll();
+        var clients = dbServiceClient.findAll();
+        clients.forEach(it -> cache.put(String.valueOf(it.getId()), it));
+        return clients;
     }
 }

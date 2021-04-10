@@ -47,11 +47,14 @@ public class MyCache<K, V> implements HwCache<K, V> {
     }
 
     private void notify(K key, V value, String action) {
-        listeners.forEach(listener -> {
+        var copy = new ArrayList<>(listeners);
+        copy.forEach(listener -> {
             try {
                 var ref = listener.get();
                 if (ref != null) {
                     ref.notify(key, value, action);
+                } else {
+                    listeners.remove(listener);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
