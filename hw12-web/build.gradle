@@ -19,6 +19,7 @@ dependencies {
     implementation("org.freemarker:freemarker:${Versions.freemarker}")
     implementation 'com.google.guava:guava'
 
+    implementation('org.flywaydb:flyway-core')
     implementation("org.hibernate:hibernate-core")
     implementation("org.postgresql:postgresql")
 }

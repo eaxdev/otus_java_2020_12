@@ -1,6 +1,8 @@
 package ru.otus;
 
 import com.google.gson.GsonBuilder;
+import org.flywaydb.core.Flyway;
+import org.flywaydb.core.internal.jdbc.DriverDataSource;
 import org.hibernate.cfg.Configuration;
 import ru.otus.hibernate.model.AddressDataSet;
 import ru.otus.hibernate.model.Client;
@@ -11,8 +13,8 @@ import ru.otus.hibernate.service.DBServiceClient;
 import ru.otus.hibernate.service.DbServiceClientImpl;
 import ru.otus.hibernate.sessionmanager.TransactionManagerHibernate;
 import ru.otus.server.ClientsWebServerWithFilterBasedSecurity;
-import ru.otus.services.TemplateProcessorImpl;
 import ru.otus.services.ClientAuthServiceImpl;
+import ru.otus.services.TemplateProcessorImpl;
 
 import java.util.List;
 
@@ -22,9 +24,9 @@ public class WebServerMain {
     public static final String HIBERNATE_CFG_FILE = "hibernate.cfg.xml";
 
     public static void main(String[] args) throws Exception {
-
-        var dbServiceClient = createDbServiceClient();
-        createClient(dbServiceClient);
+        var configuration = new Configuration().configure(HIBERNATE_CFG_FILE);
+        flywayMigrations(configuration);
+        var dbServiceClient = createDbServiceClient(configuration);
         var gson = new GsonBuilder()
                 .serializeNulls()
                 .excludeFieldsWithoutExposeAnnotation()
@@ -40,27 +42,19 @@ public class WebServerMain {
         clientWebServer.join();
     }
 
-    private static void createClient(DBServiceClient dbServiceClient) {
-        var client1 = new Client("Иванов Иван", "client1", "111");
+    private static void flywayMigrations(Configuration configuration) {
+        var url = configuration.getProperty("hibernate.connection.url");
+        var user = configuration.getProperty("hibernate.connection.username");
+        var password = configuration.getProperty("hibernate.connection.password");
 
-        var addressDataSet1 = new AddressDataSet();
-        addressDataSet1.setStreet("street1");
-        client1.setAddressDataSet(addressDataSet1);
-        addressDataSet1.setClient(client1);
-
-        var phoneDataSet1 = new PhoneDataSet("+7999");
-        phoneDataSet1.setClient(client1);
-        var phoneDataSet2 = new PhoneDataSet("+7998");
-        phoneDataSet2.setClient(client1);
-
-        client1.setPhoneDataSet(List.of(phoneDataSet1, phoneDataSet2));
-
-        dbServiceClient.saveClient(client1);
+        var flyway = Flyway.configure()
+                .dataSource(new DriverDataSource(WebServerMain.class.getClassLoader(), "org.postgresql.Driver", url, user, password))
+                .locations("classpath:/db/migration")
+                .load();
+        flyway.migrate();
     }
 
-    private static DBServiceClient createDbServiceClient() {
-        var configuration = new Configuration().configure(HIBERNATE_CFG_FILE);
-
+    private static DBServiceClient createDbServiceClient(Configuration configuration) {
         var sessionFactory = HibernateUtils.buildSessionFactory(configuration, Client.class, AddressDataSet.class, PhoneDataSet.class);
         var transactionManager = new TransactionManagerHibernate(sessionFactory);
         var clientTemplate = new DataTemplateHibernate<>(Client.class);
