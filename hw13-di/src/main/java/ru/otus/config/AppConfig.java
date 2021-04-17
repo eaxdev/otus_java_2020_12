@@ -4,14 +4,11 @@ import ru.otus.appcontainer.api.AppComponent;
 import ru.otus.appcontainer.api.AppComponentsContainerConfig;
 import ru.otus.services.*;
 
-
-import java.util.Scanner;
-
 @AppComponentsContainerConfig(order = 1)
 public class AppConfig {
 
     @AppComponent(order = 0, name = "equationPreparer")
-    public EquationPreparer equationPreparer(){
+    public EquationPreparer equationPreparer() {
         return new EquationPreparerImpl();
     }
 
