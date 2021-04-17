@@ -1,10 +1,7 @@
 package ru.otus.cachehw;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.*;
 
 /**
  * @author sergey
@@ -47,18 +44,20 @@ public class MyCache<K, V> implements HwCache<K, V> {
     }
 
     private void notify(K key, V value, String action) {
-        var copy = new ArrayList<>(listeners);
-        copy.forEach(listener -> {
+        var iterator = listeners.iterator();
+
+        while (iterator.hasNext()) {
             try {
-                var ref = listener.get();
+                var reference = iterator.next();
+                var ref = reference.get();
                 if (ref != null) {
                     ref.notify(key, value, action);
                 } else {
-                    listeners.remove(listener);
+                    iterator.remove();
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        });
+        }
     }
 }
