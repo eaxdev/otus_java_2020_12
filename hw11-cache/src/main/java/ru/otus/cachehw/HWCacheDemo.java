@@ -8,6 +8,17 @@ import org.slf4j.LoggerFactory;
  * created on 14.12.18.
  */
 public class HWCacheDemo {
+
+    /*
+    java.lang.ref.WeakReference - Объекты с такими ссылками удаляются при первой же
+    сборке мусора
+
+    java.lang.ref.SoftReference - Объекты с такими ссылками удаляются,
+    когда памяти становится мало.
+    Т.е. они все удалятся перед OutOfMemoryError.
+    Применяются к кэшах, чувствительных к памяти.
+     */
+
     private static final Logger logger = LoggerFactory.getLogger(HWCacheDemo.class);
 
     public static void main(String[] args) {
