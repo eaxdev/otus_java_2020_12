@@ -34,13 +34,18 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         try {
             processConfig(initialConfigClasses);
         } catch (Exception e) {
-            throw new RuntimeException("Can't create container", e);
+            throw new ContainerCreationException("Can't create container", e);
         }
     }
 
     private void processConfig(Class<?>... configClasses) throws Exception {
         checkConfigClass(configClasses);
-        for (var configClass : configClasses) {
+        var configClassesSorted = Arrays.stream(configClasses)
+                .filter(it -> it.isAnnotationPresent(AppComponentsContainerConfig.class))
+                .sorted(Comparator.comparingInt(it -> it.getAnnotation(AppComponentsContainerConfig.class).order()))
+                .collect(Collectors.toList());
+
+        for (var configClass : configClassesSorted) {
             var sortedMethods = Arrays.stream(configClass.getMethods())
                     .filter(it -> it.isAnnotationPresent(AppComponent.class))
                     .sorted(Comparator.comparingInt(it -> it.getAnnotation(AppComponent.class).order()))
@@ -52,8 +57,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
                 var parameters = method.getParameterTypes();
                 var args = Arrays.stream(parameters).map(this::findComponent).toArray();
 
-                var componentImpl = method.invoke(instance, args);
-                var component = method.getReturnType().cast(componentImpl);
+                var component = method.invoke(instance, args);
 
                 var componentName = method.getAnnotation(AppComponent.class).name();
                 appComponentsByName.put(componentName, component);
@@ -80,13 +84,13 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     private Object findComponent(Class<?> componentClass) {
         return appComponents.stream()
                 .filter(componentClass::isInstance)
-                .findFirst().orElseThrow(() -> new RuntimeException("Not found component"));
+                .findFirst().orElseThrow(() -> new IllegalArgumentException("Not found component"));
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public <C> C getAppComponent(String componentName) {
         return (C) Optional.ofNullable(appComponentsByName.get(componentName))
-                .orElseThrow(() -> new RuntimeException("Not found component"));
+                .orElseThrow(() -> new IllegalArgumentException("Not found component"));
     }
 }
