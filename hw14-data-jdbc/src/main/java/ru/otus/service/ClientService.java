@@ -1,9 +1,7 @@
 package ru.otus.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.otus.dto.ClientDto;
 import ru.otus.exception.ClientNotFoundException;
 import ru.otus.model.Client;
 import ru.otus.repository.ClientRepository;
@@ -15,7 +13,6 @@ public class ClientService {
 
     private final ClientRepository clientRepository;
 
-    @Autowired
     public ClientService(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
     }

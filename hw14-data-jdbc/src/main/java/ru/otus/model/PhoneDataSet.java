@@ -9,22 +9,23 @@ import org.springframework.data.relational.core.mapping.Table;
 public class PhoneDataSet {
 
     @Id
-    private Long id;
+    private final Long id;
 
     @Column("number")
-    private String number;
+    private final String number;
 
     @Column("client_id")
-    private long clientId;
+    private final Long clientId;
 
     @PersistenceConstructor
-    public PhoneDataSet(Long id, String number, long clientId) {
+    private PhoneDataSet(Long id, String number, Long clientId) {
         this.id = id;
         this.number = number;
         this.clientId = clientId;
     }
 
-    public PhoneDataSet() {
+    public PhoneDataSet(String number) {
+        this(null, number, null);
     }
 
     public Long getId() {
@@ -37,18 +38,6 @@ public class PhoneDataSet {
 
     public long getClientId() {
         return clientId;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public void setClientId(long clientId) {
-        this.clientId = clientId;
     }
 
     @Override

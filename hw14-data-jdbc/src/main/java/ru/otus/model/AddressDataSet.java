@@ -9,28 +9,28 @@ import org.springframework.data.relational.core.mapping.Table;
 public class AddressDataSet {
 
     @Id
-    private Long id;
+    private final Long id;
 
     @Column("street")
-    private String street;
+    private final String street;
 
     @Column("client_id")
-    private long clientId;
+    private final Long clientId;
 
     @PersistenceConstructor
-    public AddressDataSet(Long id, String street, long clientId) {
+    private AddressDataSet(Long id, String street, Long clientId) {
         this.id = id;
         this.street = street;
         this.clientId = clientId;
     }
 
-    public AddressDataSet() {
+    public AddressDataSet(String street) {
+        this(null, street, null);
     }
 
     public Long getId() {
         return id;
     }
-
 
     public String getStreet() {
         return street;
@@ -38,18 +38,6 @@ public class AddressDataSet {
 
     public long getClientId() {
         return clientId;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public void setClientId(long clientId) {
-        this.clientId = clientId;
     }
 
     @Override

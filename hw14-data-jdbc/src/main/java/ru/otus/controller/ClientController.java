@@ -22,7 +22,6 @@ public class ClientController {
 
     private final ClientService clientService;
 
-    @Autowired
     public ClientController(ClientService clientService) {
         this.clientService = clientService;
     }
@@ -48,17 +47,10 @@ public class ClientController {
 
     @PostMapping("/client/save")
     public RedirectView clientSave(@ModelAttribute ClientDto client) {
-        var newClient = new Client();
-        newClient.setName(client.getName());
+        var phoneDataSet = new PhoneDataSet(client.getPhone());
+        var addressDataSet = new AddressDataSet(client.getAddress());
 
-        var phoneDataSet = new PhoneDataSet();
-        phoneDataSet.setNumber(client.getPhone());
-
-        var addressDataSet = new AddressDataSet();
-        addressDataSet.setStreet(client.getAddress());
-
-        newClient.setPhoneDataSet(Set.of(phoneDataSet));
-        newClient.setAddress(addressDataSet);
+        var newClient = new Client(null, client.getName(), "", "", addressDataSet, Set.of(phoneDataSet));
 
         clientService.save(newClient);
         return new RedirectView("/client/list", true);

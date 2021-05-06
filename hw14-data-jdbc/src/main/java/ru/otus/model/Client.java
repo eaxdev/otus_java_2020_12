@@ -12,32 +12,31 @@ import java.util.Set;
 public class Client {
 
     @Id
-    private Long id;
+    private final Long id;
 
     @Column("name")
-    private String name;
+    private final String name;
 
     @Column("login")
-    private String login;
+    private final String login;
 
     @Column("password")
-    private String password;
+    private final String password;
 
     @MappedCollection(idColumn = "client_id")
-    private AddressDataSet address;
+    private final AddressDataSet address;
 
     @MappedCollection(idColumn = "client_id")
-    private Set<PhoneDataSet> phoneDataSet;
-
-    public Client() {
-    }
+    private final Set<PhoneDataSet> phoneDataSet;
 
     @PersistenceConstructor
-    public Client(Long id, String name, String login, String password) {
+    public Client(Long id, String name, String login, String password, AddressDataSet address, Set<PhoneDataSet> phoneDataSet) {
         this.id = id;
         this.name = name;
         this.login = login;
         this.password = password;
+        this.address = address;
+        this.phoneDataSet = phoneDataSet;
     }
 
     public Long getId() {
@@ -50,10 +49,6 @@ public class Client {
 
     public AddressDataSet getAddressDataSet() {
         return address;
-    }
-
-    public void setAddressDataSet(AddressDataSet addressDataSet) {
-        this.address = addressDataSet;
     }
 
     public String getLogin() {
@@ -70,30 +65,6 @@ public class Client {
 
     public Set<PhoneDataSet> getPhoneDataSet() {
         return phoneDataSet;
-    }
-
-    public void setAddress(AddressDataSet address) {
-        this.address = address;
-    }
-
-    public void setPhoneDataSet(Set<PhoneDataSet> phoneDataSet) {
-        this.phoneDataSet = phoneDataSet;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     @Override
