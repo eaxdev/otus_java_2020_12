@@ -16,7 +16,7 @@ public class DigitPrinter {
     public synchronized void print(DigitGenerator generator) {
         var threadName = Thread.currentThread().getName();
         try {
-            while (true) {
+            while (!Thread.currentThread().isInterrupted()) {
 
                 while (lastThreadName.equals(threadName)) {
                     this.wait();
