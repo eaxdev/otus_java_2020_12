@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ru.otus;
+
+option java_multiple_files = true;
+
+message DigitRequest {
+    int64 firstValue = 1;
+    int64 lastValue = 2;
+}
+
+message DigitResponse {
+    int64 number = 1;
+}
+
+service RemoteDigitService {
+    rpc Digit(DigitRequest) returns (stream DigitResponse) {};
+}
