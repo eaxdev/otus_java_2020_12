@@ -5,4 +5,6 @@ public interface Versions {
     String gson = "2.8.6";
     String jetty = "11.0.2";
     String freemarker = "2.3.31";
+    String grpc = "1.38.0";
+    String annotationsApi = "6.0.53";
 }

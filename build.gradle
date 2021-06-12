@@ -36,6 +36,10 @@ allprojects {
             dependency("com.google.guava:guava:${Versions.guava}")
             dependency("org.reflections:reflections:${Versions.reflections}")
             dependency("cglib:cglib:${Versions.cglib}")
+            dependency("io.grpc:grpc-netty-shaded:${Versions.grpc}")
+            dependency("io.grpc:grpc-protobuf:${Versions.grpc}")
+            dependency("io.grpc:grpc-stub:${Versions.grpc}")
+            dependency("org.apache.tomcat:annotations-api:${Versions.annotationsApi}")
         }
     }
 }
