@@ -5,20 +5,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.otus.DigitResponse;
 
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
-
 public class ResponseObserver implements StreamObserver<DigitResponse> {
 
     private static final Logger log = LoggerFactory.getLogger(ResponseObserver.class);
 
-    private final AtomicLong counter = new AtomicLong(0);
+    private long lastValue = 0;
 
     @Override
-    public void onNext(DigitResponse value) {
-        var number = value.getNumber();
-        log.info("OnNext value: {}", number);
-        counter.set(number);
+    public void onNext(DigitResponse response) {
+        var value = response.getNumber();
+        log.info("OnNext value: {}", value);
+        setLastValue(value);
+    }
+
+    private synchronized void setLastValue(long value) {
+        this.lastValue = value;
     }
 
     @Override
@@ -32,8 +33,8 @@ public class ResponseObserver implements StreamObserver<DigitResponse> {
     }
 
     public synchronized long getLastValueAndReset() {
-        var last = counter.get();
-        counter.set(0);
+        var last =  this.lastValue;
+        this.lastValue = 0;
         return last;
     }
 }
